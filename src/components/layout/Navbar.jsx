@@ -1,8 +1,14 @@
 import { navLinks } from "../../data/navLinks";
 import { useNavbarVisibility } from "../../hooks/useNavBarVisibility";
+import { useActiveSection } from "../../hooks/useActiveSection";
 
 export default function Navbar() {
   const visible = useNavbarVisibility();
+
+  // Derive section ids ("home", "services", etc.) from the same navLinks
+  // data used for hrefs, so there's one source of truth for both.
+  const sectionIds = navLinks.map((link) => link.href.replace("#", ""));
+  const activeId = useActiveSection(sectionIds);
 
   return (
     <nav
@@ -24,18 +30,27 @@ export default function Navbar() {
 
         {/* Nav links */}
         <ul className="flex items-center gap-10">
-          {navLinks.map((link) => (
-            <li key={link.label}>
-              <a
-                href={link.href}
-                className="font-lato font-bold text-lg tracking-wide
-                           text-brand-inactive hover:text-brand-active
-                           transition-colors duration-200"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+          {navLinks.map((link) => {
+            const id = link.href.replace("#", "");
+            const isActive = id === activeId;
+
+            return (
+              <li key={link.label}>
+                <a
+                  href={link.href}
+                  className={`font-lato font-bold text-lg tracking-wide
+                             transition-colors duration-200
+                             ${
+                               isActive
+                                 ? "text-brand-active"
+                                 : "text-brand-inactive hover:text-brand-active"
+                             }`}
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
         </ul>
 
         {/* Hire me button */}

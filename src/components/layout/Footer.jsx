@@ -11,7 +11,7 @@ export default function Footer() {
         href="#home"
         className="font-k2d font-bold text-3xl tracking-wide bg-gradient-to-r from-[#FA6E00] to-[#E60026] bg-clip-text text-transparent"
       >
-        MIZAN
+        TAOFIQUE
       </a>
 
       {/* Nav links reused from navbar data */}
