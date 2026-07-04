@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-orange: #f97316;
   --color-brand-dark: #0d0d0d;
-  --color-brand-card: #1a1a1a;
-  --font-sans: "Inter", sans-serif;
+  --color-brand-nav: #131313;
+  --color-brand-active: #fd6f00;
+  --color-brand-inactive: #959595;
+
+  --font-k2d: "K2D", sans-serif;
+  --font-lato: "Lato", sans-serif;
+}
+
+body {
+  @apply bg-brand-dark text-white;
 }
