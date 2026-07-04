@@ -74,8 +74,8 @@ export default function Hero() {
 
           <img
             src={heroMan}
-            alt="Mizanor Rahman - Full-Stack Developer"
-            className="relative z-10 w-full h-full object-cover rounded-[244px] grayscale"
+            alt="Taofique Islam - Full-Stack Developer"
+            className="relative z-10 w-full h-full object-cover rounded-t-[244px] grayscale"
           />
         </div>
       </div>
