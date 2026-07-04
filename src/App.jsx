@@ -13,15 +13,9 @@ function App() {
 
       {/* pt-[57px] offsets content below the fixed navbar, per your spec */}
       <main className="pt-[57px]">
-        <section id="home">
-          <Hero />
-        </section>
-        <section id="services">
-          <Services />
-        </section>
-        <section id="about">
-          <AboutMe />
-        </section>
+        <Hero />
+        <Services />
+        <AboutMe />
         <section id="portfolio">
           <Portfolio />
         </section>
