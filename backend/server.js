@@ -34,6 +34,19 @@ app.use("/api/blogs", blogRoutes);
 app.use("/api/contact", contactRoutes);
 
 // ============================================
+// SERVE BUILT REACT FRONTEND (dist folder)
+// ============================================
+
+const distPath = join(__dirname, "..", "dist");
+app.use(express.static(distPath));
+
+// Catch-all: any route that isn't /api/* returns the React app,
+// so React Router can handle client-side routes (e.g. /blog, /blog/:id)
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(join(distPath, "index.html"));
+});
+
+// ============================================
 // CREATE ADMIN USER
 // ============================================
 
