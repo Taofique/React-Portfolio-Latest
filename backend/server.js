@@ -17,8 +17,16 @@ dotenv.config({ path: join(__dirname, ".env") });
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// ============================================
+// MIDDLEWARE
+// ============================================
+
 app.use(cors());
 app.use(express.json());
+
+// ============================================
+// ROUTES
+// ============================================
 
 app.use("/api/blogs", blogRoutes);
 
@@ -28,8 +36,17 @@ app.use("/api/blogs", blogRoutes);
 
 const createAdmin = async () => {
   try {
+    console.log("🔍 Checking for admin user...");
+    console.log("📧 Email:", process.env.ADMIN_EMAIL);
+    console.log(
+      "🔑 Password:",
+      process.env.ADMIN_PASSWORD ? "✅ Set" : "❌ Not set",
+    );
+
     const adminExists = await User.findOne({ email: process.env.ADMIN_EMAIL });
+
     if (!adminExists) {
+      console.log("📝 Creating admin user...");
       const admin = new User({
         email: process.env.ADMIN_EMAIL,
         password: process.env.ADMIN_PASSWORD,
@@ -37,12 +54,13 @@ const createAdmin = async () => {
         role: "admin",
       });
       await admin.save();
-      console.log("✅ Admin user created");
+      console.log("✅ Admin user created successfully");
     } else {
       console.log("✅ Admin user already exists");
     }
   } catch (error) {
     console.error("❌ Error creating admin:", error.message);
+    console.error("📚 Stack trace:", error.stack);
   }
 };
 
@@ -50,16 +68,58 @@ const createAdmin = async () => {
 // CONNECT TO MONGODB
 // ============================================
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(async () => {
+const startServer = async () => {
+  try {
+    // Check if MongoDB URI exists
+    if (!process.env.MONGODB_URI) {
+      console.error("❌ MONGODB_URI is not defined in .env file");
+      process.exit(1);
+    }
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log("✅ Connected to MongoDB");
+
+    // Create admin user
     await createAdmin();
+
+    // Start server
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📍 API endpoint: http://localhost:${PORT}/api/blogs`);
     });
-  })
-  .catch((error) => {
-    console.error("❌ MongoDB connection error:", error.message);
+  } catch (error) {
+    console.error("❌ Server startup error:", error.message);
     process.exit(1);
-  });
+  }
+};
+
+// Start the server
+startServer();
+
+// ============================================
+// ERROR HANDLING
+// ============================================
+
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (error) => {
+  console.error("❌ Unhandled Rejection:", error.message);
+});
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (error) => {
+  console.error("❌ Uncaught Exception:", error.message);
+  process.exit(1);
+});
+
+// Graceful shutdown
+process.on("SIGINT", async () => {
+  try {
+    await mongoose.disconnect();
+    console.log("🔌 Disconnected from MongoDB");
+    process.exit(0);
+  } catch (error) {
+    console.error("❌ Error during shutdown:", error.message);
+    process.exit(1);
+  }
+});

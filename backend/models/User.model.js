@@ -28,14 +28,12 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// ✅ FIX: Use regular function (not arrow function)
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+// ✅ Option A: Without next parameter
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   this.password = await bcrypt.hash(this.password, 10);
-  next();
 });
 
-// ✅ FIX: Use regular function (not arrow function)
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
