@@ -44,7 +44,7 @@ export default function AboutMe() {
           </p>
 
           <a
-            href="/cv.pdf"
+            href="/cv/Taofique_Final_Resume.pdf"
             download
             className="w-fit flex items-center gap-2 font-lato font-bold text-white bg-brand-active px-6 md:px-8 py-3 rounded-md hover:opacity-90 transition-opacity"
           >

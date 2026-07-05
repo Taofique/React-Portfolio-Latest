@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 export default function CircularProgress({
   percentage,
   icon: Icon,
@@ -9,8 +11,23 @@ export default function CircularProgress({
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
 
+  // Progress ring starts fully "empty" (offset = full circumference)
+  // and animates to its real offset once the card scrolls into view.
+  const circleVariants = {
+    hidden: { strokeDashoffset: circumference },
+    visible: {
+      strokeDashoffset: offset,
+      transition: { duration: 1.2, ease: "easeOut" },
+    },
+  };
+
   return (
-    <div className="flex flex-col items-center gap-3">
+    <motion.div
+      className="flex flex-col items-center gap-3"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: false, amount: 0.5 }}
+    >
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
           {/* Background track */}
@@ -22,8 +39,8 @@ export default function CircularProgress({
             strokeWidth={strokeWidth}
             fill="none"
           />
-          {/* Filled progress */}
-          <circle
+          {/* Filled progress - animates in when scrolled into view */}
+          <motion.circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
@@ -31,8 +48,8 @@ export default function CircularProgress({
             strokeWidth={strokeWidth}
             fill="none"
             strokeDasharray={circumference}
-            strokeDashoffset={offset}
             strokeLinecap="round"
+            variants={circleVariants}
           />
         </svg>
         {/* Icon centered on top of the ring */}
@@ -44,6 +61,6 @@ export default function CircularProgress({
         {percentage}%
       </span>
       <span className="font-lato text-brand-inactive">{label}</span>
-    </div>
+    </motion.div>
   );
 }

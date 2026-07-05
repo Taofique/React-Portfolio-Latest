@@ -1,6 +1,74 @@
+import { motion } from "framer-motion";
 import heroMan from "../../assets/hero_man.png";
 import { socialLinks } from "../../data/footerLinks";
 import { heroStats } from "../../data/heroStats";
+
+// Parent container: staggers each character's entrance, one after another
+const letterContainer = {
+  hidden: {},
+  visible: (delayChildren = 0) => ({
+    transition: {
+      staggerChildren: 0.03,
+      delayChildren,
+    },
+  }),
+};
+
+// Each character fades up into place
+const letterItem = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.25, ease: "easeOut" },
+  },
+};
+
+// Reusable component: splits text into words, then characters within each word,
+// and animates them in left to right. Words are wrapped so a word can only
+// break to a new line as a whole unit — never mid-word.
+function AnimatedText({ text, className, delayChildren = 0, as: Tag = "p" }) {
+  const MotionTag = motion[Tag];
+  const words = text.split(" ");
+
+  return (
+    <MotionTag
+      className={className}
+      style={{ display: "flex", flexWrap: "wrap" }}
+      variants={letterContainer}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: false, amount: 0.6 }}
+      custom={delayChildren}
+    >
+      {words.map((word, wordIndex) => (
+        <span
+          key={wordIndex}
+          style={{ display: "inline-flex", whiteSpace: "nowrap" }}
+        >
+          {word.split("").map((char, charIndex) => (
+            <motion.span
+              key={charIndex}
+              variants={letterItem}
+              style={{ display: "inline-block" }}
+            >
+              {char}
+            </motion.span>
+          ))}
+          {/* Space after each word (except the last) so wrapping happens between words */}
+          {wordIndex !== words.length - 1 && (
+            <motion.span
+              variants={letterItem}
+              style={{ display: "inline-block" }}
+            >
+              &nbsp;
+            </motion.span>
+          )}
+        </span>
+      ))}
+    </MotionTag>
+  );
+}
 
 export default function Hero() {
   return (
@@ -11,18 +79,25 @@ export default function Hero() {
       <div className="flex flex-col lg:flex-row items-center lg:items-center justify-between gap-10">
         {/* Left content column */}
         <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 w-full lg:max-w-[618px]">
-          <div>
-            <p className="font-lato text-base md:text-lg text-brand-inactive">
-              Hi I am
-            </p>
-            <p className="font-lato text-xl md:text-2xl font-semibold text-gray-200">
-              Taofique Islam
-            </p>
+          <div className="flex flex-col items-center lg:items-start">
+            <AnimatedText
+              text="Hi I am"
+              className="font-lato text-base md:text-lg text-brand-inactive justify-center lg:justify-start"
+              delayChildren={0}
+            />
+            <AnimatedText
+              text="Taofique Islam"
+              className="font-lato text-xl md:text-2xl font-semibold text-gray-200 justify-center lg:justify-start"
+              delayChildren={0.25}
+            />
           </div>
 
-          <h1 className="font-lato font-extrabold text-4xl md:text-5xl lg:text-6xl text-brand-active leading-tight">
-            Full-Stack Developer
-          </h1>
+          <AnimatedText
+            as="h1"
+            text="Full-Stack Developer"
+            className="font-lato font-extrabold text-4xl md:text-5xl lg:text-6xl text-brand-active leading-tight justify-center lg:justify-start"
+            delayChildren={0.7}
+          />
 
           {/* Social icons */}
           <div className="flex items-center gap-4">
