@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/blogs";
+const API_URL = "/api/blogs";
 
 // Helper to get token
 const getToken = () => localStorage.getItem("token");
