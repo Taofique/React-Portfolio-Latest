@@ -7,25 +7,27 @@ export default function AboutMe() {
   return (
     <section
       id="about"
-      className="w-full max-w-[1440px] mx-auto px-20 py-16 flex flex-col gap-10"
+      className="w-full max-w-[1440px] mx-auto px-6 md:px-20 py-16 flex flex-col gap-10"
     >
       <div className="text-center">
-        <h2 className="font-lato font-bold text-4xl text-white">About Me</h2>
-        <p className="font-lato text-brand-inactive mt-3">
+        <h2 className="font-lato font-bold text-3xl md:text-4xl text-white">
+          About Me
+        </h2>
+        <p className="font-lato text-brand-inactive mt-3 text-sm md:text-base px-4 md:px-0">
           User Interface And User Experience And Also Video Editing
         </p>
       </div>
 
-      <div className="flex items-start gap-[100px]">
+      {/* Stacks vertically on mobile, side-by-side from lg breakpoint up */}
+      <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10 lg:gap-[100px]">
         <img
           src={aboutMan}
           alt="Mizanor Rahman"
-          className="w-[420px] h-auto rounded-2xl grayscale object-cover"
+          className="w-full max-w-[320px] lg:w-[420px] lg:max-w-none h-auto rounded-2xl grayscale object-cover"
         />
 
-        {/* Right column - removed justify-between and fixed height */}
-        <div className="w-[631px] flex flex-col gap-6">
-          <p className="font-lato text-brand-inactive leading-relaxed text-lg text-justify">
+        <div className="w-full lg:w-[631px] flex flex-col gap-6">
+          <p className="font-lato text-brand-inactive leading-relaxed text-base md:text-lg text-justify">
             A software engineer, the modern-day architect of digital realms,
             navigates the ethereal landscapes of code, sculpting intangible
             structures that shape our technological world. With fingers poised
@@ -44,7 +46,7 @@ export default function AboutMe() {
           <a
             href="/cv.pdf"
             download
-            className="w-fit flex items-center gap-2 font-lato font-bold text-white bg-brand-active px-8 py-3 rounded-md hover:opacity-90 transition-opacity"
+            className="w-fit flex items-center gap-2 font-lato font-bold text-white bg-brand-active px-6 md:px-8 py-3 rounded-md hover:opacity-90 transition-opacity"
           >
             <HiOutlineDownload size={20} />
             Download CV
@@ -52,8 +54,8 @@ export default function AboutMe() {
         </div>
       </div>
 
-      {/* Skills row */}
-      <div className="flex items-center justify-between mt-6 flex-wrap gap-6">
+      {/* Skills: 2-column grid on mobile (matches screenshot), even row from lg up */}
+      <div className="grid grid-cols-2 lg:flex lg:items-center lg:justify-between gap-x-6 gap-y-10 mt-6 justify-items-center">
         {skills.map((skill) => (
           <CircularProgress key={skill.label} {...skill} />
         ))}

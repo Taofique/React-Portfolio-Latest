@@ -5,22 +5,22 @@ import { socialLinks } from "../../data/footerLinks";
 
 export default function Footer() {
   return (
-    <footer className="w-full px-20 pt-10 pb-6 flex flex-col items-center gap-[50px] bg-brand-nav">
+    <footer className="w-full px-6 md:px-20 pt-10 pb-6 flex flex-col items-center gap-8 md:gap-[50px] bg-brand-nav">
       {/* Logo */}
       <a
         href="#home"
-        className="font-k2d font-bold text-3xl tracking-wide bg-gradient-to-r from-[#FA6E00] to-[#E60026] bg-clip-text text-transparent"
+        className="font-k2d font-bold text-2xl md:text-3xl tracking-wide bg-gradient-to-r from-[#FA6E00] to-[#E60026] bg-clip-text text-transparent"
       >
         TAOFIQUE
       </a>
 
-      {/* Nav links reused from navbar data */}
-      <ul className="flex items-center gap-10">
+      {/* Nav links reused from navbar data - wraps to multiple centered rows on small screens */}
+      <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:gap-10">
         {navLinks.map((link) => (
           <li key={link.label}>
             <a
               href={link.href}
-              className="font-lato font-bold text-lg text-brand-inactive hover:text-brand-active transition-colors"
+              className="font-lato font-bold text-base md:text-lg text-brand-inactive hover:text-brand-active transition-colors"
             >
               {link.label}
             </a>
@@ -43,8 +43,8 @@ export default function Footer() {
         ))}
       </div>
 
-      {/* Contact details */}
-      <div className="flex items-center gap-10 font-lato font-bold text-lg text-brand-inactive">
+      {/* Contact details - stacked on mobile, side-by-side from md up */}
+      <div className="flex flex-col md:flex-row items-center gap-4 md:gap-10 font-lato font-bold text-base md:text-lg text-brand-inactive text-center">
         <span className="flex items-center gap-2">
           <HiOutlineMail /> taofique9014@gmail.com
         </span>
@@ -55,7 +55,7 @@ export default function Footer() {
 
       {/* Divider + credit */}
       <div className="w-full border-t border-white/10 pt-4 text-center">
-        <p className="font-lato text-sm text-brand-inactive">
+        <p className="font-lato text-sm text-brand-inactive px-4">
           Designed by @taofique.islam Full Stack Developer
         </p>
       </div>
