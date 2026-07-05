@@ -2,6 +2,7 @@ import express from "express";
 import Blog from "../models/Blog.model.js";
 import User from "../models/User.model.js";
 import auth from "../middleware/auth.js";
+import upload from "../middleware/upload.js";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
@@ -41,32 +42,101 @@ router.get("/:id", async (req, res) => {
 // PROTECTED ROUTES (Admin only)
 // ============================================
 
-// CREATE blog
-router.post("/", auth, async (req, res) => {
+// CREATE blog with image upload
+router.post("/", auth, upload.single("image"), async (req, res) => {
   try {
-    const blog = new Blog(req.body);
+    console.log("📝 Creating blog...");
+    console.log("📦 Body:", req.body);
+    console.log("📸 File:", req.file);
+
+    // Parse tags if they come as string
+    let tags = req.body.tags;
+    if (typeof tags === "string") {
+      try {
+        tags = JSON.parse(tags);
+      } catch {
+        tags = tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean);
+      }
+    }
+
+    const blogData = {
+      title: req.body.title,
+      excerpt: req.body.excerpt,
+      content: req.body.content,
+      category: req.body.category || "General",
+      author: req.body.author || "Taofique Islam",
+      readTime: req.body.readTime || "5 min read",
+      tags: tags || [],
+      image: req.file ? req.file.path : req.body.image || "/blog/default.jpg",
+    };
+
+    const blog = new Blog(blogData);
     await blog.save();
+
+    console.log("✅ Blog created successfully");
     res.status(201).json({ success: true, data: blog });
   } catch (error) {
+    console.error("❌ Create blog error:", error);
     res.status(400).json({ success: false, message: error.message });
   }
 });
 
-// UPDATE blog
-router.put("/:id", auth, async (req, res) => {
+// UPDATE blog with image upload
+router.put("/:id", auth, upload.single("image"), async (req, res) => {
   try {
-    const blog = await Blog.findByIdAndUpdate(
-      req.params.id,
-      { ...req.body, updatedAt: Date.now() },
-      { new: true, runValidators: true },
-    );
+    console.log("📝 Updating blog:", req.params.id);
+    console.log("📦 Body:", req.body);
+    console.log("📸 File:", req.file);
+
+    // Parse tags if they come as string
+    let tags = req.body.tags;
+    if (typeof tags === "string") {
+      try {
+        tags = JSON.parse(tags);
+      } catch {
+        tags = tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean);
+      }
+    }
+
+    const updateData = {
+      title: req.body.title,
+      excerpt: req.body.excerpt,
+      content: req.body.content,
+      category: req.body.category || "General",
+      author: req.body.author,
+      readTime: req.body.readTime,
+      tags: tags || [],
+      updatedAt: Date.now(),
+    };
+
+    // Only update image if new file uploaded or URL provided
+    if (req.file) {
+      updateData.image = req.file.path;
+    } else if (req.body.image) {
+      updateData.image = req.body.image;
+    }
+
+    const blog = await Blog.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
     if (!blog) {
       return res
         .status(404)
         .json({ success: false, message: "Blog not found" });
     }
+
+    console.log("✅ Blog updated successfully");
     res.json({ success: true, data: blog });
   } catch (error) {
+    console.error("❌ Update blog error:", error);
     res.status(400).json({ success: false, message: error.message });
   }
 });
@@ -87,18 +157,13 @@ router.delete("/:id", auth, async (req, res) => {
 });
 
 // ============================================
-// AUTH ROUTE
+// AUTH ROUTES
 // ============================================
 
 // LOGIN
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    console.log("🔐 Login attempt:");
-    console.log("📧 Email:", email);
-    console.log("🔑 Password provided:", password);
-    console.log("🔑 Password length:", password?.length);
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -108,7 +173,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    //  Using the comparePassword method from the model
+    // Using the comparePassword method from the model
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({
@@ -134,6 +199,36 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("❌ Login error:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ============================================
+// VERIFY TOKEN ROUTE
+// ============================================
+
+router.get("/verify", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Verify error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });

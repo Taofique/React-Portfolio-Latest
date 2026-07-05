@@ -12,7 +12,6 @@ export default function BlogEdit() {
   const { id } = useParams();
   const { isAuthenticated, user } = useAuth();
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       sessionStorage.setItem("redirectAfterLogin", `/blog/edit/${id}`);
@@ -34,20 +33,11 @@ export default function BlogEdit() {
     fetchBlog();
   }, [id, isAuthenticated, navigate]);
 
-  const handleSubmit = async (data) => {
+  // ✅ Handle form submission with FormData
+  const handleSubmit = async (formData) => {
     setLoading(true);
     try {
-      // Ensure author is set
-      const blogData = {
-        ...data,
-        author: data.author || user?.name || blog?.author || "Taofique Islam",
-      };
-
-      console.log("📝 Updating blog with data:", blogData);
-
-      const response = await updateBlog(id, blogData);
-      console.log("✅ Blog updated:", response);
-
+      const response = await updateBlog(id, formData);
       navigate(`/blog/${response.data._id}`);
     } catch (error) {
       console.error("❌ Update blog error:", error);
@@ -66,7 +56,6 @@ export default function BlogEdit() {
 
   return (
     <section className="w-full max-w-[900px] mx-auto px-4 md:px-20 py-10 md:py-16">
-      {/* ✅ Back Button */}
       <Link
         to="/blog"
         className="flex items-center gap-2 text-brand-inactive hover:text-brand-active transition-colors mb-6"

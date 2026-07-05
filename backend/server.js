@@ -4,8 +4,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import blogRoutes from "./routes/blogRoutes.js";
-import User from "./models/User.model.js";
 
 // Get the directory name (ES module equivalent of __dirname)
 const __filename = fileURLToPath(import.meta.url);
@@ -13,6 +11,9 @@ const __dirname = dirname(__filename);
 
 // Load .env from the backend folder
 dotenv.config({ path: join(__dirname, ".env") });
+
+import blogRoutes from "./routes/blogRoutes.js";
+import User from "./models/User.model.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;

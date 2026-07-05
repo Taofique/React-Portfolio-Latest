@@ -3,7 +3,7 @@ const API_URL = "http://localhost:5000/api/blogs";
 // Helper to get token
 const getToken = () => localStorage.getItem("token");
 
-// Helper headers
+// Helper headers for JSON requests
 const getHeaders = () => ({
   "Content-Type": "application/json",
   ...(getToken() && { Authorization: `Bearer ${getToken()}` }),
@@ -71,13 +71,22 @@ export const getBlog = async (id) => {
   }
 };
 
-// Create blog
-export const createBlog = async (blogData) => {
+// ============================================
+// BLOG API WITH FORM DATA (for image upload)
+// ============================================
+
+// Create blog with image
+export const createBlog = async (formData) => {
   try {
+    const token = getToken();
+    console.log("📤 Creating blog with FormData");
+
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify(blogData),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData, // ← FormData, not JSON!
     });
 
     const data = await response.json();
@@ -89,13 +98,18 @@ export const createBlog = async (blogData) => {
   }
 };
 
-// Update blog
-export const updateBlog = async (id, blogData) => {
+// Update blog with image
+export const updateBlog = async (id, formData) => {
   try {
+    const token = getToken();
+    console.log("📤 Updating blog with FormData");
+
     const response = await fetch(`${API_URL}/${id}`, {
       method: "PUT",
-      headers: getHeaders(),
-      body: JSON.stringify(blogData),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData, // ← FormData, not JSON!
     });
 
     const data = await response.json();
