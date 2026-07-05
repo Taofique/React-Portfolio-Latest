@@ -17,8 +17,9 @@ const blogSchema = new mongoose.Schema({
   },
   author: {
     type: String,
-    required: true,
+    required: false,
     default: "Taofique Islam",
+    trim: true,
   },
   category: {
     type: String,

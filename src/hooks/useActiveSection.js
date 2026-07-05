@@ -1,21 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export function useActiveSection(sectionIds) {
-  const [activeId, setActiveId] = useState(sectionIds[0]);
+  const [activeId, setActiveId] = useState(sectionIds[0] || "");
+  const ratiosRef = useRef({}); // persists across callback firings
 
   useEffect(() => {
+    if (!sectionIds.length) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
+        // Update only the sections that actually fired in this batch
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
+          ratiosRef.current[entry.target.id] = entry.isIntersecting
+            ? entry.intersectionRatio
+            : 0;
+        });
+
+        // Now compare across ALL sections' last-known ratios
+        let maxRatio = 0;
+        let mostVisibleId = null;
+
+        Object.entries(ratiosRef.current).forEach(([id, ratio]) => {
+          if (ratio > maxRatio) {
+            maxRatio = ratio;
+            mostVisibleId = id;
           }
         });
+
+        if (mostVisibleId) {
+          setActiveId(mostVisibleId);
+        }
       },
       {
-        // Section counts as "active" once it's near the top of the viewport,
-        // not only when fully visible — feels more natural while scrolling.
-        rootMargin: "-50% 0px -50% 0px",
+        threshold: [0, 0.2, 0.4, 0.6, 0.8, 1.0],
+        rootMargin: "-10% 0px -10% 0px",
       },
     );
 
@@ -24,7 +42,10 @@ export function useActiveSection(sectionIds) {
       if (el) observer.observe(el);
     });
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      ratiosRef.current = {};
+    };
   }, [sectionIds]);
 
   return activeId;
