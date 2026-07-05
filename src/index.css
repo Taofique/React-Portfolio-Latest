@@ -18,3 +18,7 @@ html {
 body {
   @apply bg-brand-dark text-white;
 }
+
+section {
+  scroll-margin-top: 90px;
+}

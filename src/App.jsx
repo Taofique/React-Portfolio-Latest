@@ -4,7 +4,7 @@ import Hero from "./components/sections/Hero";
 import Contact from "./components/sections/Contact";
 import AboutMe from "./components/sections/AboutMe";
 import Portfolio from "./components/sections/Portfolio";
-import Services from "./components/sections/Services";
+import Expertise from "./components/sections/Expertise";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
       {/* pt-[57px] offsets content below the fixed navbar, per your spec */}
       <main className="pt-[57px]">
         <Hero />
-        <Services />
+        <Expertise />
         <AboutMe />
         <Portfolio />
         <Contact />
