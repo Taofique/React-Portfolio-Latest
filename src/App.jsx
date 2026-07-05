@@ -16,12 +16,8 @@ function App() {
         <Hero />
         <Services />
         <AboutMe />
-        <section id="portfolio">
-          <Portfolio />
-        </section>
-        <section id="contact">
-          <Contact />
-        </section>
+        <Portfolio />
+        <Contact />
       </main>
 
       <Footer />
