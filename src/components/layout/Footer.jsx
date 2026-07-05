@@ -56,7 +56,7 @@ export default function Footer() {
       {/* Divider + credit */}
       <div className="w-full border-t border-white/10 pt-4 text-center">
         <p className="font-lato text-sm text-brand-inactive px-4">
-          Designed by @taofique.islam Full Stack Developer
+          Designed by @taofique.islam <br></br> Full-Stack Developer
         </p>
       </div>
     </footer>
