@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { navLinks } from "../../data/navLinks";
-import { useNavbarVisibility } from "../../hooks/useNavbarVisibility";
+import { useNavbarVisibility } from "../../hooks/useNavBarVisibility";
 import { useActiveSection } from "../../hooks/useActiveSection";
 import { HiMenu, HiX } from "react-icons/hi";
 
