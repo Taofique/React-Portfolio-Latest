@@ -18,13 +18,49 @@ export default function Contact() {
     details: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setLoading(true);
+    setError("");
+    setSuccess(false);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to send message");
+      }
+
+      setSuccess(true);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        service: "",
+        timeline: "",
+        details: "",
+      });
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,27 +77,39 @@ export default function Contact() {
         </p>
       </div>
 
-      {/* Card: full width on mobile, capped at 1012px from lg breakpoint up */}
       <form
         onSubmit={handleSubmit}
         className="w-full lg:w-[1012px] bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 md:p-10 flex flex-col gap-6"
       >
-        {/* Single column on mobile, 2 columns from md breakpoint up */}
+        {success && (
+          <div className="bg-green-500/10 border border-green-500 text-green-500 rounded-lg p-3 text-center text-sm">
+            ✅ Message sent successfully! I'll get back to you soon.
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-500/10 border border-red-500 text-red-500 rounded-lg p-3 text-center text-sm">
+            ❌ {error}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
           <input
             type="text"
             name="name"
-            placeholder="Name"
+            placeholder="Name *"
             value={formData.name}
             onChange={handleChange}
+            required
             className="bg-brand-nav text-white placeholder-brand-inactive rounded-lg px-5 py-4 font-lato outline-none focus:ring-2 focus:ring-brand-active transition"
           />
           <input
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="Email *"
             value={formData.email}
             onChange={handleChange}
+            required
             className="bg-brand-nav text-white placeholder-brand-inactive rounded-lg px-5 py-4 font-lato outline-none focus:ring-2 focus:ring-brand-active transition"
           />
 
@@ -78,13 +126,18 @@ export default function Contact() {
             name="service"
             value={formData.service}
             onChange={handleChange}
+            required
             className="bg-brand-nav text-brand-inactive rounded-lg px-5 py-4 font-lato outline-none focus:ring-2 focus:ring-brand-active transition"
           >
             <option value="" disabled>
-              Service Of Interest
+              Service Of Interest *
             </option>
             {serviceOptions.map((option) => (
-              <option key={option} value={option}>
+              <option
+                key={option}
+                value={option}
+                className="bg-brand-nav text-white"
+              >
                 {option}
               </option>
             ))}
@@ -105,15 +158,16 @@ export default function Contact() {
             value={formData.details}
             onChange={handleChange}
             rows={4}
-            className="bg-brand-nav text-white placeholder-brand-inactive rounded-lg px-5 py-4 font-lato outline-none focus:ring-2 focus:ring-brand-active transition resize-none md:col-span-1"
+            className="bg-brand-nav text-white placeholder-brand-inactive rounded-lg px-5 py-4 font-lato outline-none focus:ring-2 focus:ring-brand-active transition resize-none"
           />
         </div>
 
         <button
           type="submit"
-          className="self-center md:self-end w-full md:w-auto font-lato font-bold text-white border border-white/20 px-8 py-3 rounded-lg hover:bg-brand-active hover:border-brand-active transition-colors"
+          disabled={loading}
+          className="self-center md:self-end w-full md:w-auto font-lato font-bold text-white border border-white/20 px-8 py-3 rounded-lg hover:bg-brand-active hover:border-brand-active transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Send
+          {loading ? "Sending..." : "Send"}
         </button>
       </form>
     </section>

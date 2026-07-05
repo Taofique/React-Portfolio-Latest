@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import contactRoutes from "./routes/contactRoutes.js";
 
 // Get the directory name (ES module equivalent of __dirname)
 const __filename = fileURLToPath(import.meta.url);
@@ -30,6 +31,7 @@ app.use(express.json());
 // ============================================
 
 app.use("/api/blogs", blogRoutes);
+app.use("/api/contact", contactRoutes);
 
 // ============================================
 // CREATE ADMIN USER

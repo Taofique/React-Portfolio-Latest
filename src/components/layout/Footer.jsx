@@ -1,14 +1,72 @@
 import { HiOutlineMail } from "react-icons/hi";
 import { FiPhone } from "react-icons/fi";
+import { useLocation, useNavigate } from "react-router-dom";
 import { navLinks } from "../../data/navLinks";
 import { socialLinks } from "../../data/footerLinks";
 
 export default function Footer() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Same smooth-scroll + router-aware navigation logic used in Navbar,
+  // so footer links behave identically regardless of which page you're on.
+  const handleNavigation = (href, label) => {
+    // Blog link
+    if (label === "Blog") {
+      navigate("/blog");
+      return;
+    }
+
+    // Section links (start with #)
+    if (href.startsWith("#")) {
+      if (location.pathname !== "/") {
+        navigate("/");
+        setTimeout(() => {
+          const element = document.querySelector(href);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      } else {
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+      return;
+    }
+
+    // Home link ("/")
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const element = document.querySelector("#home");
+        if (element) element.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      const element = document.querySelector("#home");
+      if (element) element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <footer className="w-full px-6 md:px-20 pt-10 pb-6 flex flex-col items-center gap-8 md:gap-[50px] bg-brand-nav">
       {/* Logo */}
       <a
         href="#home"
+        onClick={handleLogoClick}
         className="font-k2d font-bold text-2xl md:text-3xl tracking-wide bg-gradient-to-r from-[#FA6E00] to-[#E60026] bg-clip-text text-transparent"
       >
         TAOFIQUE
@@ -20,6 +78,10 @@ export default function Footer() {
           <li key={link.label}>
             <a
               href={link.href}
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavigation(link.href, link.label);
+              }}
               className="font-lato font-bold text-base md:text-lg text-brand-inactive hover:text-brand-active transition-colors"
             >
               {link.label}
