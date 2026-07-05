@@ -38,6 +38,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// LIKE a blog (public - anyone can like, no auth required)
+router.post("/:id/like", async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Blog not found" });
+    }
+    blog.likes += 1;
+    await blog.save();
+    res.json({ success: true, data: { likes: blog.likes } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // ============================================
 // PROTECTED ROUTES (Admin only)
 // ============================================

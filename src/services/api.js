@@ -71,6 +71,21 @@ export const getBlog = async (id) => {
   }
 };
 
+// Like a blog
+export const likeBlog = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/${id}/like`, {
+      method: "POST",
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to like blog");
+    return data;
+  } catch (error) {
+    console.error("❌ Like blog error:", error);
+    throw error;
+  }
+};
+
 // ============================================
 // BLOG API WITH FORM DATA (for image upload)
 // ============================================
